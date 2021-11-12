@@ -1,52 +1,17 @@
 # infispan-test Project
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
-
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
-
-## Running the application in dev mode
-
-You can run your application in dev mode that enables live coding using:
-```shell script
-./gradlew quarkusDev
+To test the concept, start infinispan locally:
+```
+docker run -it -p 11222:11222 -e USER="admin" -e PASS="password" quay.io/infinispan/server:13.0
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+Then start two instances of this project using `./gradlew quarkusDev` and `./gradlew quarkusDev -Dquarkus.http.port=8081` (to make sure it uses a different port than the first instance).
 
-## Packaging and running the application
-
-The application can be packaged using:
-```shell script
-./gradlew build
+You can now call
 ```
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-```shell script
-./gradlew build -Dquarkus.package.type=uber-jar
+curl -XPOST localhost:8080/values\?key\=hello\&value\=world
 ```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using: 
-```shell script
-./gradlew build -Dquarkus.package.type=native
+and 
 ```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
+curl localhost:8081/values/hello
 ```
-
-You can then execute your native executable with: `./build/infispan-test-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/gradle-tooling.
-
-## Related Guides
-
-- Kotlin ([guide](https://quarkus.io/guides/kotlin)): Write your services in Kotlin
