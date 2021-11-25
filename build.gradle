@@ -13,7 +13,10 @@ dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-kotlin'
     implementation 'io.quarkus:quarkus-resteasy-jackson'
-    implementation 'io.quarkus:quarkus-infinispan-client'
+//    implementation 'io.quarkus:quarkus-infinispan-client'
+    implementation 'org.infinispan:infinispan-core:12.1.7.Final'
+    implementation 'org.infinispan:infinispan-clustered-lock:12.1.7.Final'
+
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'io.quarkus:quarkus-arc'
     testImplementation 'io.quarkus:quarkus-junit5'

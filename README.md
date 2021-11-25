@@ -1,4 +1,4 @@
-# infispan-test Project
+# infinispan-test Project
 
 To test the concept, start infinispan locally:
 ```
