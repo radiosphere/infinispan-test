@@ -30,6 +30,7 @@ class InfinispanCacheFactory {
     fun createCacheManager(): EmbeddedCacheManager {
 
         val global = GlobalConfigurationBuilder.defaultClusteredBuilder()
+            .globalState().defaultCacheName("default")
 
         if(System.getenv("POD_NAME") != null) {
             global.transport().addProperty("configurationFile", "default-configs/default-jgroups-kubernetes.xml")
@@ -38,7 +39,6 @@ class InfinispanCacheFactory {
             global.transport().addProperty("configurationFile", "default-configs/default-jgroups-tcp.xml")
         }
 
-        val cacheManager = DefaultCacheManager(global.build())
         val builder = ConfigurationBuilder()
 
         global.addModule(ClusteredLockManagerConfigurationBuilder::class.java)
@@ -55,8 +55,11 @@ class InfinispanCacheFactory {
             .expiration().maxIdle(30, TimeUnit.MINUTES).enableReaper()
             .statistics().enabled(true)
 
-        cacheManager.administration().withFlags(CacheContainerAdmin.AdminFlag.VOLATILE)
+        val cacheManager = DefaultCacheManager(global.build(), builder.build())
+
+        val cache = cacheManager.administration().withFlags(CacheContainerAdmin.AdminFlag.VOLATILE)
             .getOrCreateCache<String, String>("default", builder.build())
+
 
         return cacheManager
     }

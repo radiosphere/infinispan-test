@@ -58,18 +58,9 @@ class ValueController {
                 }
             }
         } catch ( t: Throwable) {
-            if(cacheManager.status == ComponentStatus.RUNNING) {
-                logger.warning("Stopping Cache for reset")
-                cacheManager.stop()
-                Thread {
-                    runBlocking {
-                        delay(60*1000L)
-                        cacheManager.start()
-                        logger.info("Cache started again!")
-                    }
-                }
-            }
-
+            val cache  = cacheManager.getCache<String, String>("default")
+            logger.info("Cache default has availability mode: ${cache.advancedCache.availability}")
+            throw t
         }
     }
 
