@@ -4,6 +4,9 @@ package io.radiosphere.inifispantest
 //import org.infinispan.client.hotrod.RemoteCacheManager
 import io.quarkus.runtime.ShutdownEvent
 import io.quarkus.runtime.StartupEvent
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import org.infinispan.lifecycle.ComponentStatus
 import org.infinispan.lock.api.ClusteredLockManager
 import org.infinispan.manager.EmbeddedCacheManager
 import org.jboss.logmanager.LogManager
@@ -11,6 +14,7 @@ import org.jboss.logmanager.Logger
 import javax.enterprise.event.Observes
 import javax.inject.Inject
 import javax.ws.rs.*
+import kotlin.time.Duration
 
 @Path("/values")
 class ValueController {
@@ -27,7 +31,7 @@ class ValueController {
     val logger = Logger.getAnonymousLogger()
 
     fun onStartup(@Observes startupEvent: StartupEvent) {
-        logger.warning("Startus of cache manager: ${cacheManager.status}")
+        logger.warning("Status of cache manager: ${cacheManager.status}")
         cacheManager.start()
     }
 
@@ -39,17 +43,33 @@ class ValueController {
 
     @POST
     fun saveValue(@QueryParam("key") key: String, @QueryParam("value") value: String) {
-        lockManager.defineLock(key)
+        try {
+            lockManager.defineLock(key)
 
-        val lock = lockManager.get(key)
 
-        lock.tryLock().whenComplete { acquired, problem ->
-            if(acquired) {
-                val cache  = cacheManager.getCache<String, String>("default")
-                cache.put(key, value)
-            } else {
-                logger.warning("Nope, some issue. ${problem}")
+            val lock = lockManager.get(key)
+
+            lock.tryLock().whenComplete { acquired, problem ->
+                if(acquired) {
+                    val cache  = cacheManager.getCache<String, String>("default")
+                    cache.put(key, value)
+                } else {
+                    logger.warning("Nope, some issue. ${problem}")
+                }
             }
+        } catch ( t: Throwable) {
+            if(cacheManager.status == ComponentStatus.RUNNING) {
+                logger.warning("Stopping Cache for reset")
+                cacheManager.stop()
+                Thread {
+                    runBlocking {
+                        delay(60*1000L)
+                        cacheManager.start()
+                        logger.info("Cache started again!")
+                    }
+                }
+            }
+
         }
     }
 

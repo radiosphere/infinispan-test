@@ -6,6 +6,7 @@ import org.infinispan.configuration.cache.CacheMode
 import org.infinispan.configuration.cache.ConfigurationBuilder
 import org.infinispan.configuration.cache.StorageType
 import org.infinispan.configuration.global.GlobalConfigurationBuilder
+import org.infinispan.conflict.EntryMergePolicy
 import org.infinispan.eviction.EvictionStrategy
 import org.infinispan.lock.EmbeddedClusteredLockManagerFactory
 import org.infinispan.lock.api.ClusteredLockManager
@@ -23,12 +24,13 @@ import javax.enterprise.inject.Produces
 
 
 @ApplicationScoped
-class InfinispanConfiguration {
+class InfinispanCacheFactory {
 
     @Produces
     fun createCacheManager(): EmbeddedCacheManager {
 
         val global = GlobalConfigurationBuilder.defaultClusteredBuilder()
+
         if(System.getenv("POD_NAME") != null) {
             global.transport().addProperty("configurationFile", "default-configs/default-jgroups-kubernetes.xml")
             global.transport().addProperty("jgroups.dns.query", "localhost")
@@ -41,12 +43,17 @@ class InfinispanConfiguration {
 
         global.addModule(ClusteredLockManagerConfigurationBuilder::class.java)
             .reliability(Reliability.AVAILABLE)
+            .numOwner(2)
 
         builder.clustering().cacheMode(CacheMode.DIST_SYNC)
             .stateTransfer().awaitInitialTransfer(true)
             .partitionHandling()
             .whenSplit(PartitionHandling.ALLOW_READ_WRITES)
+//            .mergePolicy { preferredEntry, otherEntries ->
+//                preferredEntry
+//            }
             .expiration().maxIdle(30, TimeUnit.MINUTES).enableReaper()
+            .statistics().enabled(true)
 
         cacheManager.administration().withFlags(CacheContainerAdmin.AdminFlag.VOLATILE)
             .getOrCreateCache<String, String>("default", builder.build())
