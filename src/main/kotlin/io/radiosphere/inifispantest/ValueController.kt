@@ -40,7 +40,6 @@ class ValueController {
     @POST
     fun saveValue(@QueryParam("key") key: String, @QueryParam("value") value: String) {
         lockManager.defineLock(key)
-        lockManager.remove()
 
         val lock = lockManager.get(key)
 
