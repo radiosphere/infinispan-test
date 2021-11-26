@@ -11,6 +11,8 @@ import org.infinispan.lock.EmbeddedClusteredLockManagerFactory
 import org.infinispan.lock.api.ClusteredLockManager
 import org.infinispan.lock.configuration.ClusteredLockConfiguration
 import org.infinispan.lock.configuration.ClusteredLockConfigurationBuilder
+import org.infinispan.lock.configuration.ClusteredLockManagerConfigurationBuilder
+import org.infinispan.lock.configuration.Reliability
 import org.infinispan.lock.impl.manager.EmbeddedClusteredLockManager
 import org.infinispan.manager.DefaultCacheManager
 import org.infinispan.manager.EmbeddedCacheManager
@@ -36,13 +38,16 @@ class InfinispanConfiguration {
 
         val cacheManager = DefaultCacheManager(global.build())
         val builder = ConfigurationBuilder()
-//        builder.clustering().cacheMode(CacheMode.DIST_SYNC)
-//            .partitionHandling().whenSplit(PartitionHandling.ALLOW_READ_WRITES)
+
+        global.addModule(ClusteredLockManagerConfigurationBuilder::class.java)
+            .reliability(Reliability.AVAILABLE)
+
         builder.clustering().cacheMode(CacheMode.DIST_SYNC)
             .stateTransfer().awaitInitialTransfer(true)
             .partitionHandling()
             .whenSplit(PartitionHandling.ALLOW_READ_WRITES)
             .expiration().maxIdle(30, TimeUnit.MINUTES).enableReaper()
+
         cacheManager.administration().withFlags(CacheContainerAdmin.AdminFlag.VOLATILE)
             .getOrCreateCache<String, String>("default", builder.build())
 
