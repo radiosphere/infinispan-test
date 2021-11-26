@@ -1,3 +1,3 @@
 #!/bin/sh
 
-kill `lsof -ti tcp:$1`
+kill -15 `lsof -ti tcp:$1`

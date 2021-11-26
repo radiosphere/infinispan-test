@@ -15,3 +15,16 @@ and
 ```
 curl localhost:8081/values/hello
 ```
+
+
+## Issue with Clustered Key.
+
+1. start-server 8080
+1. start-server 8081
+1. set-key 8080 hello world
+1. get-key 8081 hello
+1. kill-server 8080
+1. set-key 8081 hello world
+1. start-server 8080
+1. kill-server 8081
+1. set-key 8080 hello world // here it blows up. Key is not part of partition

@@ -38,7 +38,7 @@ class InfinispanConfiguration {
         val builder = ConfigurationBuilder()
 //        builder.clustering().cacheMode(CacheMode.DIST_SYNC)
 //            .partitionHandling().whenSplit(PartitionHandling.ALLOW_READ_WRITES)
-        builder.clustering().cacheMode(CacheMode.SCATTERED_SYNC)
+        builder.clustering().cacheMode(CacheMode.DIST_SYNC)
             .stateTransfer().awaitInitialTransfer(true)
             .partitionHandling()
             .whenSplit(PartitionHandling.ALLOW_READ_WRITES)

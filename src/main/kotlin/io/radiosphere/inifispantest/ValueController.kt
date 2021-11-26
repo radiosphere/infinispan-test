@@ -2,10 +2,13 @@ package io.radiosphere.inifispantest
 
 //import org.infinispan.client.hotrod.RemoteCache
 //import org.infinispan.client.hotrod.RemoteCacheManager
+import io.quarkus.runtime.ShutdownEvent
+import io.quarkus.runtime.StartupEvent
 import org.infinispan.lock.api.ClusteredLockManager
 import org.infinispan.manager.EmbeddedCacheManager
 import org.jboss.logmanager.LogManager
 import org.jboss.logmanager.Logger
+import javax.enterprise.event.Observes
 import javax.inject.Inject
 import javax.ws.rs.*
 
@@ -23,9 +26,21 @@ class ValueController {
 
     val logger = Logger.getAnonymousLogger()
 
+    fun onStartup(@Observes startupEvent: StartupEvent) {
+        logger.warning("Startus of cache manager: ${cacheManager.status}")
+        cacheManager.start()
+    }
+
+    fun onStop(@Observes shutdownEvent: ShutdownEvent) {
+        logger.warning("Shutting down cache manager status: ${cacheManager.status}")
+        cacheManager.stop()
+        logger.warning("Status of cache manager after shutdown: ${cacheManager.status}")
+    }
+
     @POST
     fun saveValue(@QueryParam("key") key: String, @QueryParam("value") value: String) {
         lockManager.defineLock(key)
+        lockManager.remove()
 
         val lock = lockManager.get(key)
 
