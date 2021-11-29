@@ -21,10 +21,12 @@ import org.infinispan.partitionhandling.PartitionHandling
 import java.util.concurrent.TimeUnit
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.inject.Produces
+import javax.inject.Inject
 
 
 @ApplicationScoped
 class InfinispanCacheFactory {
+
 
     @Produces
     fun createCacheManager(): EmbeddedCacheManager {
@@ -52,14 +54,14 @@ class InfinispanCacheFactory {
 //            .mergePolicy { preferredEntry, otherEntries ->
 //                preferredEntry
 //            }
-            .expiration().maxIdle(30, TimeUnit.MINUTES).enableReaper()
+            .expiration().maxIdle(10, TimeUnit.SECONDS).enableReaper()
             .statistics().enabled(true)
+
 
         val cacheManager = DefaultCacheManager(global.build(), builder.build())
 
         val cache = cacheManager.administration().withFlags(CacheContainerAdmin.AdminFlag.VOLATILE)
             .getOrCreateCache<String, String>("default", builder.build())
-
 
         return cacheManager
     }

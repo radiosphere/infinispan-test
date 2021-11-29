@@ -51,10 +51,12 @@ class ValueController {
 
             lock.tryLock().whenComplete { acquired, problem ->
                 if(acquired) {
+                    logger.warning("Lock acquired! settings value :).")
                     val cache  = cacheManager.getCache<String, String>("default")
+                    cache.addListener(MyExpireListener())
                     cache.put(key, value)
                 } else {
-                    logger.warning("Nope, some issue. ${problem}")
+                    logger.warning("Nope, lock not acquired. ${problem}")
                 }
             }
         } catch ( t: Throwable) {
