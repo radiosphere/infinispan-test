@@ -15,8 +15,8 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-jackson'
     implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
 //    implementation 'io.quarkus:quarkus-infinispan-client'
-    implementation 'org.infinispan:infinispan-core:12.1.7.Final'
-    implementation 'org.infinispan:infinispan-clustered-lock:12.1.7.Final'
+    implementation 'org.infinispan:infinispan-core:13.0.0.Final'
+    implementation 'org.infinispan:infinispan-clustered-lock:13.0.0.Final'
 
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'io.quarkus:quarkus-arc'
