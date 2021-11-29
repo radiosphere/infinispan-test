@@ -54,7 +54,7 @@ class InfinispanCacheFactory {
 //            .mergePolicy { preferredEntry, otherEntries ->
 //                preferredEntry
 //            }
-            .expiration().maxIdle(10, TimeUnit.SECONDS).enableReaper()
+            .expiration().maxIdle(20, TimeUnit.MINUTES).enableReaper()
             .statistics().enabled(true)
 
 

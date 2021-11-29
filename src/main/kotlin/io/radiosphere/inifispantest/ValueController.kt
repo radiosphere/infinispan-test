@@ -53,7 +53,6 @@ class ValueController {
                 if(acquired) {
                     logger.warning("Lock acquired! settings value :).")
                     val cache  = cacheManager.getCache<String, String>("default")
-                    cache.addListener(MyExpireListener())
                     cache.put(key, value)
                 } else {
                     logger.warning("Nope, lock not acquired. ${problem}")
