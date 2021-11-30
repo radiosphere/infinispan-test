@@ -11,6 +11,7 @@ import org.infinispan.lock.api.ClusteredLockManager
 import org.infinispan.manager.EmbeddedCacheManager
 import org.jboss.logmanager.LogManager
 import org.jboss.logmanager.Logger
+import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import javax.enterprise.event.Observes
 import javax.inject.Inject
@@ -56,7 +57,7 @@ class ValueController {
 
             val lock = lockManager.get(key)
 
-            lock.tryLock().whenComplete { acquired, problem ->
+            lock.tryLock(3, TimeUnit.SECONDS).whenComplete { acquired, problem ->
                 if(acquired) {
                     logger.warning("Lock acquired! settings value :).")
                     val cache  = cacheManager.getCache<String, String>("default")
