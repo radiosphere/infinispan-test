@@ -46,9 +46,9 @@ class InfinispanCacheFactory {
 
         val builder = ConfigurationBuilder()
 
-//        global.addModule(ClusteredLockManagerConfigurationBuilder::class.java)
-//            .reliability(Reliability.AVAILABLE)
-//            .numOwner(2)
+        global.addModule(ClusteredLockManagerConfigurationBuilder::class.java)
+            .reliability(Reliability.AVAILABLE)
+            .numOwner(2)
 
         builder.clustering().cacheMode(CacheMode.DIST_SYNC)
             .stateTransfer().awaitInitialTransfer(true)

@@ -33,6 +33,9 @@ class ValueController {
     fun onStartup(@Observes startupEvent: StartupEvent) {
         logger.warning("Status of cache manager: ${cacheManager.status}")
         cacheManager.start()
+        val cache  = cacheManager.getCache<String, String>("default")
+        cache.start()
+        logger.warning("Status of cache : ${cache.status}")
     }
 
     fun onStop(@Observes shutdownEvent: ShutdownEvent) {
@@ -44,8 +47,9 @@ class ValueController {
     @POST
     fun saveValue(@QueryParam("key") key: String, @QueryParam("value") value: String) {
         try {
-            lockManager.defineLock(key)
+            val lockDefined = lockManager.defineLock(key)
 
+            logger.info("Tried defining lock $key. Lock defined: $lockDefined")
 
             val lock = lockManager.get(key)
 
