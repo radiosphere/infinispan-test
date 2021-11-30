@@ -18,6 +18,7 @@ import org.infinispan.lock.impl.manager.EmbeddedClusteredLockManager
 import org.infinispan.manager.DefaultCacheManager
 import org.infinispan.manager.EmbeddedCacheManager
 import org.infinispan.partitionhandling.PartitionHandling
+import org.jboss.logmanager.Logger
 import java.util.concurrent.TimeUnit
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.inject.Produces
@@ -27,12 +28,14 @@ import javax.inject.Inject
 @ApplicationScoped
 class InfinispanCacheFactory {
 
+    val logger = Logger.getAnonymousLogger()
 
     @Produces
+    @ApplicationScoped
     fun createCacheManager(): EmbeddedCacheManager {
 
+        logger.info("Creating Cache Manager...")
         val global = GlobalConfigurationBuilder.defaultClusteredBuilder()
-            .globalState().defaultCacheName("default")
 
         if(System.getenv("POD_NAME") != null) {
             global.transport().addProperty("configurationFile", "default-configs/default-jgroups-kubernetes.xml")
@@ -43,9 +46,9 @@ class InfinispanCacheFactory {
 
         val builder = ConfigurationBuilder()
 
-        global.addModule(ClusteredLockManagerConfigurationBuilder::class.java)
-            .reliability(Reliability.AVAILABLE)
-            .numOwner(2)
+//        global.addModule(ClusteredLockManagerConfigurationBuilder::class.java)
+//            .reliability(Reliability.AVAILABLE)
+//            .numOwner(2)
 
         builder.clustering().cacheMode(CacheMode.DIST_SYNC)
             .stateTransfer().awaitInitialTransfer(true)
@@ -58,7 +61,7 @@ class InfinispanCacheFactory {
             .statistics().enabled(true)
 
 
-        val cacheManager = DefaultCacheManager(global.build(), builder.build())
+        val cacheManager = DefaultCacheManager(global.build())
 
         val cache = cacheManager.administration().withFlags(CacheContainerAdmin.AdminFlag.VOLATILE)
             .getOrCreateCache<String, String>("default", builder.build())
@@ -68,6 +71,7 @@ class InfinispanCacheFactory {
 
     @Produces
     fun createLockManager(cacheManager: EmbeddedCacheManager): ClusteredLockManager {
+        logger.info("Creating Lock Manager...")
         val lockManager = EmbeddedClusteredLockManagerFactory.from(cacheManager)
         return lockManager
     }
