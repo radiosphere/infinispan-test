@@ -1,3 +1,0 @@
-<subsystem xmlns="urn:jboss:domain:logging:3.4.2">
-    <console-handler name="CONSOLE">
-        <level name="TRACE"/>
