@@ -1,20 +1,13 @@
 package io.radiosphere.inifispantest
 
-import org.infinispan.Cache
 import org.infinispan.commons.api.CacheContainerAdmin
 import org.infinispan.configuration.cache.CacheMode
 import org.infinispan.configuration.cache.ConfigurationBuilder
-import org.infinispan.configuration.cache.StorageType
 import org.infinispan.configuration.global.GlobalConfigurationBuilder
-import org.infinispan.conflict.EntryMergePolicy
-import org.infinispan.eviction.EvictionStrategy
 import org.infinispan.lock.EmbeddedClusteredLockManagerFactory
 import org.infinispan.lock.api.ClusteredLockManager
-import org.infinispan.lock.configuration.ClusteredLockConfiguration
-import org.infinispan.lock.configuration.ClusteredLockConfigurationBuilder
 import org.infinispan.lock.configuration.ClusteredLockManagerConfigurationBuilder
 import org.infinispan.lock.configuration.Reliability
-import org.infinispan.lock.impl.manager.EmbeddedClusteredLockManager
 import org.infinispan.manager.DefaultCacheManager
 import org.infinispan.manager.EmbeddedCacheManager
 import org.infinispan.partitionhandling.PartitionHandling
@@ -22,7 +15,6 @@ import org.jboss.logmanager.Logger
 import java.util.concurrent.TimeUnit
 import javax.enterprise.context.ApplicationScoped
 import javax.enterprise.inject.Produces
-import javax.inject.Inject
 
 
 @ApplicationScoped
@@ -65,6 +57,8 @@ class InfinispanCacheFactory {
 
         val cache = cacheManager.administration().withFlags(CacheContainerAdmin.AdminFlag.VOLATILE)
             .getOrCreateCache<String, String>("default", builder.build())
+
+        cache.addListener(MyCacheEventListener())
 
         return cacheManager
     }
