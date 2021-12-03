@@ -30,21 +30,21 @@ class ValueController {
 
     val logger = Logger.getAnonymousLogger()
 
-    fun onStartup(@Observes startupEvent: StartupEvent) {
-        logger.warning("Status of cache manager: ${cacheManager.status}")
-        cacheManager.start()
-        val cache  = cacheManager.getCache<String, String>("default")
-        cache.start()
-        logger.warning("Status of cache : ${cache.status}")
-    }
+//    fun onStartup(@Observes startupEvent: StartupEvent) {
+//        logger.warning("Status of cache manager: ${cacheManager.status}")
+//        cacheManager.start()
+//        val cache  = cacheManager.getCache<String, String>("default")
+//        cache.start()
+//        logger.warning("Status of cache : ${cache.status}")
+//    }
 
-    fun onStop(@Observes shutdownEvent: ShutdownEvent) {
-        logger.warning("Shutting down cache manager status: ${cacheManager.status}")
-        cacheManager.stop()
-        val cache  = cacheManager.getCache<String, String>("default")
-        cache.stop()
-        logger.warning("Status of cache manager after shutdown: ${cacheManager.status}")
-    }
+//    fun onStop(@Observes shutdownEvent: ShutdownEvent) {
+//        logger.warning("Shutting down cache manager status: ${cacheManager.status}")
+//        cacheManager.stop()
+//        val cache  = cacheManager.getCache<String, String>("default")
+//        cache.stop()
+//        logger.warning("Status of cache manager after shutdown: ${cacheManager.status}")
+//    }
 
     @POST
     fun saveValue(@QueryParam("key") key: String, @QueryParam("value") value: String) {

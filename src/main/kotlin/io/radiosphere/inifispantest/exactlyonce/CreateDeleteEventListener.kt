@@ -6,7 +6,7 @@ import org.infinispan.notifications.cachelistener.annotation.CacheEntryRemoved
 import org.infinispan.notifications.cachelistener.event.CacheEntryCreatedEvent
 import org.infinispan.notifications.cachelistener.event.CacheEntryRemovedEvent
 
-@Listener(observation = Listener.Observation.POST)
+@Listener(primaryOnly = true, observation = Listener.Observation.POST)
 class CreateDeleteEventListener(val startupFunction: (String) -> Unit, val stopFunction:(String) -> Unit) {
 
     val logger = org.jboss.logging.Logger.getLogger(this.javaClass)

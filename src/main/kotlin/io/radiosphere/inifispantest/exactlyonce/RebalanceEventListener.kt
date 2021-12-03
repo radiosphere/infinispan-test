@@ -29,13 +29,13 @@ class RebalanceEventListener(val startupFunction: (String) -> Unit, val stopFunc
             val allNewKeys = IntSets.mutableCopyFrom(newPrimarySegments);
             allNewKeys.removeAll(oldPrimarySegments);
             val allRemovedKeys = IntSets.mutableCopyFrom(oldPrimarySegments);
-            allNewKeys.removeAll(newPrimarySegments);
+            allRemovedKeys.removeAll(newPrimarySegments);
 
             logger.info("Rebalance, new keys: ${allNewKeys.count()}, removed keys: ${allRemovedKeys.count()}")
             cache.entries.stream()
                 .filterKeySegments(allRemovedKeys)
                 .forEach ( Consumer {
-                    logger.info("Rebalance, starting ${it.key}")
+                    logger.info("Rebalance, stopping ${it.key}")
                     stopFunction(it.key)
                 })
 

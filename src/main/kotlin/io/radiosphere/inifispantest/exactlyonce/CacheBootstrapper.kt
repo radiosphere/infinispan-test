@@ -43,10 +43,12 @@ class CacheBootstrapper {
             .getOrCreateCache<String, String>("start-session", builder.build())
         val createDeleteListener = CreateDeleteEventListener(
             {logger.infof("Session started cache %s", it) },
-            {logger.infof("Session stopped cache %s", it) })
+            {logger.infof("Session stopped cache %s", it) }
+        )
         val topologyChangeListener = RebalanceEventListener(
             {logger.infof("Session started rebalance %s", it) },
-            {logger.infof("Session stopped rebalance %s", it) })
+            {logger.infof("Session stopped rebalance %s", it) }
+        )
         cache.addListener(createDeleteListener)
         cache.addListener(topologyChangeListener)
     }
