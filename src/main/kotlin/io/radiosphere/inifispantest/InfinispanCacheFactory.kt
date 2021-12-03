@@ -40,7 +40,7 @@ class InfinispanCacheFactory {
 
         global.addModule(ClusteredLockManagerConfigurationBuilder::class.java)
             .reliability(Reliability.AVAILABLE)
-            .numOwner(2)
+            .numOwner(1)
 
         builder.clustering().cacheMode(CacheMode.DIST_SYNC)
             .stateTransfer().awaitInitialTransfer(true)

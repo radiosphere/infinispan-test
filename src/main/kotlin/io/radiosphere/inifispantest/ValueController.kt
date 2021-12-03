@@ -1,7 +1,5 @@
 package io.radiosphere.inifispantest
 
-//import org.infinispan.client.hotrod.RemoteCache
-//import org.infinispan.client.hotrod.RemoteCacheManager
 import io.quarkus.runtime.ShutdownEvent
 import io.quarkus.runtime.StartupEvent
 import kotlinx.coroutines.delay
